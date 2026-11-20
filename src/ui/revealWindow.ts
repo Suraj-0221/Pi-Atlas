@@ -228,7 +228,7 @@ export class RevealWindow {
     this.showInFieldBtn.textContent = 'Show in the field';
     this.showInFieldBtn.addEventListener('click', () => {
       if (this.currentHit) {
-        this.dismiss();
+        this.dismiss(true);
         const letters = this.currentHit.letterLabels || (this.currentHit.name ? this.currentHit.name.toUpperCase().split('') : undefined);
         this.callbacks.onShowInField?.(
           this.currentHit.firstOccurrence,
@@ -495,7 +495,7 @@ export class RevealWindow {
         flyBtn.textContent = 'Show in field';
         const hitCopy = party.hit;
         flyBtn.addEventListener('click', () => {
-          this.dismiss();
+          this.dismiss(true);
           this.callbacks.onShowInField?.(
             hitCopy.firstOccurrence,
             hitCopy.patternStr.length,
@@ -755,7 +755,7 @@ export class RevealWindow {
           const pos = parseInt(btn.dataset.pos || '0', 10);
           const len = parseInt(btn.dataset.len || '1', 10);
           const pieceLetters = (hit.pieces && hit.pieces[pIdx]?.letterLabels) || undefined;
-          this.dismiss();
+          this.dismiss(true);
           this.callbacks.onShowInField?.(pos, len, 'Name Piece', hit.patternStr, pieceLetters);
         });
       });
@@ -1276,7 +1276,7 @@ export class RevealWindow {
   });
 }
 
-  public dismiss() {
+  public dismiss(skipCloseCallback = false) {
     this.cancelRunningAnimations();
     this.isVisible = false;
     this.resultsBlockEl.style.visibility = 'hidden';
@@ -1299,7 +1299,9 @@ export class RevealWindow {
       this.modalContainerEl.style.display = 'none';
       try { overlayFade.cancel(); } catch {}
       try { glassFade.cancel(); } catch {}
-      this.callbacks.onClose?.();
+      if (!skipCloseCallback) {
+        this.callbacks.onClose?.();
+      }
     };
   }
 

@@ -317,7 +317,9 @@ async function bootstrap() {
         },
         onClose: () => {
           namePanel?.clearTileHighlights();
-          expandStageBlock();
+          if (window.innerWidth > 768) {
+            expandStageBlock();
+          }
         },
         onSwitchToName: () => {
           expandStageBlock();
@@ -763,13 +765,17 @@ async function bootstrap() {
       mobileSheetHandle.addEventListener('touchend', (e) => {
         const deltaY = e.changedTouches[0].clientY - touchStartY;
         if (deltaY > 30) {
-          panelWrapper.classList.add('collapsed');
+          collapseStageBlock();
         } else if (deltaY < -30) {
-          panelWrapper.classList.remove('collapsed');
+          expandStageBlock();
         }
       }, { passive: true });
       mobileSheetHandle.addEventListener('click', () => {
-        panelWrapper.classList.toggle('collapsed');
+        if (panelWrapper.classList.contains('collapsed') || panelWrapper.classList.contains('collapsed-bar')) {
+          expandStageBlock();
+        } else {
+          collapseStageBlock();
+        }
       });
     }
 
@@ -1000,6 +1006,7 @@ function flyToDigit(
   letterLabels?: string[]
 ) {
   stopDrift();
+  collapseStageBlock();
   visualizer.clearImageGather();
   visualizer.setDim(0);
   const overlay = document.getElementById('img-cinematic-overlay');
@@ -1014,18 +1021,15 @@ function flyToDigit(
   const targetZoom = 32.0;
   let targetY = y + 0.5;
 
-  // On mobile (<= 768px), if the bottom sheet is expanded, center the match within the unobstructed visible area above the sheet
-  if (window.innerWidth <= 768 && panelWrapper) {
-    const isCollapsed = panelWrapper.classList.contains('collapsed') || panelWrapper.classList.contains('collapsed-bar');
-    if (!isCollapsed) {
-      const sheetRect = panelWrapper.getBoundingClientRect();
-      const topBarHeight = 50;
-      const sheetTop = sheetRect.top > 0 ? sheetRect.top : window.innerHeight * 0.45;
-      const unobstructedCenterY = (topBarHeight + sheetTop) / 2;
-      const screenCenterY = window.innerHeight / 2;
-      const offsetPx = unobstructedCenterY - screenCenterY;
-      targetY -= (offsetPx / targetZoom);
-    }
+  // On mobile (<= 768px), stage block is collapsed to bottom handle (50px) above readout bar (32px).
+  // Center the match optically in the open canvas between the top bar (50px) and bottom handle (82px).
+  if (window.innerWidth <= 768) {
+    const topInset = 50;
+    const bottomInset = 82;
+    const unobstructedCenterY = (topInset + (window.innerHeight - bottomInset)) / 2;
+    const screenCenterY = window.innerHeight / 2;
+    const offsetPx = unobstructedCenterY - screenCenterY;
+    targetY -= (offsetPx / targetZoom);
   }
 
   animator.flyTo({

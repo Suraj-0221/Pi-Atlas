@@ -618,15 +618,18 @@ canvas#digit-canvas {
   }
 
   .panel-card-wrapper,
-  .panel-card-wrapper.stage-mode {
+  .panel-card-wrapper.stage-mode,
+  .panel-card-wrapper.collapsed-bar {
     left: 0 !important;
     right: 0 !important;
     top: auto !important;
     bottom: 32px !important;
-    transform: none !important;
+    transform: translateY(0) !important;
     width: 100% !important;
     max-width: 100% !important;
-    max-height: 60vh;
+    height: auto !important;
+    max-height: 60vh !important;
+    display: block !important;
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
@@ -641,17 +644,10 @@ canvas#digit-canvas {
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08) !important;
   }
 
-  .panel-card-wrapper.collapsed {
-    transform: translateY(calc(100% - 50px)) !important;
-  }
-
+  .panel-card-wrapper.collapsed,
   .panel-card-wrapper.collapsed-bar {
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 32px !important;
-    border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    transform: translateY(calc(100% - 50px)) !important;
+    overflow: hidden !important;
   }
 
   .mobile-sheet-handle {
