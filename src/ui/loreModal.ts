@@ -349,13 +349,6 @@ export class LoreModal {
     this.isOpen = true;
     this.lastFocusedElement = triggerEl || (document.activeElement as HTMLElement | null);
 
-    // Mark seen in localStorage (wrapped in try/catch)
-    try {
-      localStorage.setItem('piatlas_lore_seen', '1');
-    } catch {
-      // Ignore storage restrictions
-    }
-
     // Scroll lock
     document.body.classList.add('lore-open');
 
@@ -379,6 +372,14 @@ export class LoreModal {
   public close() {
     if (!this.isOpen) return;
     this.isOpen = false;
+
+    // Mark seen in localStorage (wrapped in try/catch)
+    try {
+      localStorage.setItem('piatlas_lore_seen', '1');
+      localStorage.setItem('piatlas_lore_seen_v2', '1');
+    } catch {
+      // Ignore storage restrictions
+    }
 
     this.overlayEl.classList.remove('is-open');
     document.body.classList.remove('lore-open');

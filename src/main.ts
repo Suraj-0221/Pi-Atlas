@@ -889,7 +889,7 @@ async function bootstrap() {
 
     // Auto-open on first visit only (~600ms after load)
     try {
-      const seen = localStorage.getItem('piatlas_lore_seen');
+      const seen = localStorage.getItem('piatlas_lore_seen_v2');
       if (!seen) {
         window.setTimeout(() => {
           loreModal.open(0, btnOpenLore);

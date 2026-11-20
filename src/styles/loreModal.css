@@ -223,9 +223,14 @@ body.lore-open {
 /* Word-by-word reveal */
 .lore-word {
   display: inline-block;
+  margin-right: 0.32em;
   opacity: 0;
   transform: translateY(6px);
   animation: loreWordFadeIn 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.lore-word:last-child {
+  margin-right: 0;
 }
 
 @keyframes loreWordFadeIn {
@@ -394,41 +399,34 @@ body.lore-open {
    ------------------------------------------------------------ */
 @media (max-width: 899px) {
   .lore-overlay {
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
   }
 
   .lore-card {
-    width: 100%;
-    max-width: 100%;
+    width: min(480px, 94vw);
+    max-width: 480px;
     min-height: auto;
     height: auto;
     max-height: 88dvh;
     aspect-ratio: auto;
-    border-radius: 20px 20px 0 0;
-    border-bottom: none;
-    border-left: none;
-    border-right: none;
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr auto;
-    transform: translateY(100%);
-    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.22);
-    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    grid-template-rows: auto 1fr auto;
+    transform: translateY(16px) scale(0.985);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+    padding-bottom: 0;
   }
 
   .lore-overlay.is-open .lore-card {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 
-  /* Drag Handle on Mobile */
+  /* Centered popup does not need sheet drag handle */
   .lore-drag-handle {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 24px;
-    width: 100%;
-    cursor: grab;
-    touch-action: pan-y;
+    display: none;
   }
 
   .lore-drag-bar {
