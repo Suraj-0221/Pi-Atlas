@@ -1,0 +1,29 @@
+# Dependencies and build
+node_modules/
+dist/
+
+# System and editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+
+# Local artifacts, dumps, and loose root screenshots
+/*.png
+scratch/
+reveal_trace.json
+pi_atlas_codebase.md
+pi_atlas_source.zip
+
+# Public binary files and icons
+!public/pi_10m.bin
+!public/test_100k.bin
+!public/favicon.svg
+!public/pi_*.bin
+!public/icon-*.png
+!public/apple-touch-icon.png
+!public/og-default.png
+!public/_headers
+
+# Project showcase screenshots
+!screenshots/*.png

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find your birthday in π: π Atlas</title>
+    <meta name="description" content="Explore 10 million digits of π. Find where your birthday, name, or photo appears in the universal mathematical constant." />
+    <meta name="theme-color" content="#F5F4EE" />
+    <link rel="canonical" href="https://pi-atlas.org/" />
+
+    <!-- Open Graph / WhatsApp / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="π Atlas" />
+    <meta property="og:title" content="Find your birthday in π: π Atlas" />
+    <meta property="og:description" content="Explore 10 million digits of π. Find where your birthday, name, or photo appears in the universal mathematical constant." />
+    <meta property="og:image" content="https://pi-atlas.org/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Find your birthday in π: π Atlas" />
+    <meta name="twitter:description" content="Explore 10 million digits of π. Find where your birthday, name, or photo appears in the universal mathematical constant." />
+    <meta name="twitter:image" content="https://pi-atlas.org/og-default.png" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles/base.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Top Bar (48px) -->
+      <header class="top-bar">
+        <div class="brand">
+          <span class="brand-title">π Atlas</span>
+        </div>
+
+        <nav class="tabs-container" aria-label="Explorer navigation tabs">
+          <button id="tab-date" class="tab-btn active" data-tab="date">Date</button>
+          <button id="tab-name" class="tab-btn" data-tab="name">Name</button>
+          <button id="tab-image" class="tab-btn" data-tab="image">Image</button>
+        </nav>
+
+        <div class="top-right-links">
+          <button type="button" id="btn-open-game" class="tab-btn" style="color: var(--accent); font-weight: 500; font-size: 0.82rem; padding: 4px 10px;">
+            π Game
+          </button>
+          <button type="button" id="btn-open-curiosities" class="tab-btn" style="font-weight: 500; font-size: 0.82rem; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px;">
+            Curiosities
+          </button>
+          <button type="button" id="btn-toggle-sound" class="tab-btn" style="font-size: 0.82rem; padding: 4px 8px;" aria-label="Toggle sound">
+            <span id="sound-label">🔈 Sound: Off</span>
+          </button>
+          <button type="button" id="btn-open-about" class="tab-btn" style="font-size: 0.82rem; padding: 4px 8px;">About</button>
+        </div>
+      </header>
+
+      <!-- Main Canvas Viewport -->
+      <main class="canvas-container" id="canvas-container">
+        <canvas id="digit-canvas"></canvas>
+        <div class="landing-paper-overlay" aria-hidden="true"></div>
+
+        <!-- Cinematic Image Overlay: 1px frame and caption plate (Task 5c) -->
+        <div id="img-cinematic-overlay" class="img-cinematic-overlay" style="display: none;" aria-hidden="true">
+          <div id="img-cinematic-frame" class="img-cinematic-frame"></div>
+          <div id="img-cinematic-caption" class="img-cinematic-caption">
+            <div id="cinematic-caption-title" class="cinematic-caption-title"></div>
+            <div id="cinematic-caption-sub" class="cinematic-caption-sub"></div>
+            <div class="cinematic-caption-actions">
+              <button type="button" class="link-btn" id="cinematic-btn-replay">Replay</button>
+              <button type="button" class="link-btn" id="cinematic-btn-another">Try another</button>
+              <button type="button" class="link-btn" id="cinematic-btn-share">Share</button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Vertical Minimap Strip at right edge (desktop) -->
+      <div id="minimap-strip" class="minimap-strip" aria-label="10 Million digits minimap"></div>
+
+      <!-- Stage Block (desktop: left 56px, vertically centered / mobile: bottom sheet) -->
+      <aside id="input-panel-wrapper" class="panel-card-wrapper stage-block stage-mode" aria-label="Search controls">
+        <!-- Mobile drag handle (56px) -->
+        <div id="mobile-sheet-handle" class="mobile-sheet-handle">
+          <div class="handle-bar"></div>
+          <span id="handle-title">Date in π</span>
+        </div>
+
+        <div id="input-panel" class="panel-card-content">
+          <!-- Swapped dynamically by active tab -->
+        </div>
+
+        <button type="button" id="btn-new-search" class="btn-new-search" style="display: none;">
+          New search
+        </button>
+      </aside>
+
+      <!-- Slim Readout Bar (32px pinned to bottom edge) -->
+      <footer class="readout-bar" id="readout-bar">
+        <div class="readout-item">
+          <span>Position:</span>
+          <span id="readout-position" class="readout-val">1</span>
+          <span>of 10,000,000</span>
+        </div>
+        <div class="readout-item" id="readout-stats">
+          <span id="readout-scale">Overview</span>
+        </div>
+      </footer>
+
+      <!-- Curiosities Discovery Modal -->
+      <div id="curiosities-modal" class="reveal-overlay" style="display: none; z-index: 950;">
+        <div class="curiosities-card">
+          <div class="curiosities-header">
+            <div>
+              <div class="curiosities-tagline">Mathematical Landmarks</div>
+              <h2 class="curiosities-title">Curiosities & Secrets in π</h2>
+            </div>
+            <button type="button" id="btn-close-curiosities" class="reveal-card-corner-close" aria-label="Close">&times;</button>
+          </div>
+          <p class="curiosities-intro">
+            In 10 million digits of π, extraordinary mathematical coincidences emerge. Tap any milestone to fly directly to its coordinates.
+          </p>
+          <div class="curiosities-grid" id="curiosities-grid"></div>
+        </div>
+      </div>
+
+      <!-- ARIA Live Announcement Region -->
+      <div id="aria-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

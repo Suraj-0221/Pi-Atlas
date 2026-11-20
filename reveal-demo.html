@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>π Atlas — Reveal Window Demo (/reveal-demo)</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles/base.css" />
+    <style>
+      /* Demo Instrument Controls Panel */
+      .demo-controls-panel {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 360px;
+        max-width: calc(100vw - 40px);
+        background: rgba(250, 249, 245, 0.95);
+        border: 1px solid #E3E0D5;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(31, 30, 29, 0.12);
+        padding: 16px;
+        z-index: 1000;
+        font-family: system-ui, -apple-system, sans-serif;
+        color: #1F1E1D;
+      }
+
+      .demo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #ECEAE2;
+      }
+
+      .demo-title {
+        font-weight: 600;
+        font-size: 0.92rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .demo-pill {
+        background: #C96442;
+        color: #FFF;
+        font-size: 0.68rem;
+        font-family: var(--font-mono);
+        padding: 1px 6px;
+        border-radius: 3px;
+        text-transform: uppercase;
+      }
+
+      .demo-row {
+        margin-bottom: 12px;
+      }
+
+      .demo-label {
+        font-size: 0.74rem;
+        font-weight: 500;
+        color: #6B6860;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .demo-btn-group {
+        display: flex;
+        gap: 6px;
+      }
+
+      .demo-btn {
+        flex: 1;
+        padding: 5px 8px;
+        font-size: 0.78rem;
+        font-family: var(--font-mono);
+        background: #FAF9F5;
+        border: 1px solid #E3E0D5;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #1F1E1D;
+        text-align: center;
+        transition: background-color 0.1s ease, border-color 0.1s ease;
+      }
+
+      .demo-btn:hover {
+        background: #F5F4EE;
+      }
+
+      .demo-btn.active {
+        background: #1F1E1D;
+        color: #FFF;
+        border-color: #1F1E1D;
+      }
+
+      .demo-select {
+        width: 100%;
+        padding: 6px 8px;
+        font-size: 0.8rem;
+        font-family: var(--font-mono);
+        background: #FAF9F5;
+        border: 1px solid #E3E0D5;
+        border-radius: 4px;
+        color: #1F1E1D;
+        outline: none;
+      }
+
+      .demo-slider {
+        width: 100%;
+        cursor: pointer;
+        accent-color: #C96442;
+      }
+
+      .demo-action-btn {
+        width: 100%;
+        background: #C96442;
+        color: #FFF;
+        border: none;
+        border-radius: 4px;
+        padding: 9px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        margin-top: 6px;
+      }
+
+      .demo-action-btn:hover {
+        background: #B5583A;
+      }
+
+      .demo-status-toast {
+        margin-top: 10px;
+        font-size: 0.74rem;
+        color: #6B6860;
+        text-align: center;
+        font-family: var(--font-mono);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" style="width: 100vw; height: 100vh; overflow: hidden; position: relative;">
+      <!-- Background Digit Field -->
+      <canvas id="demo-bg-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;"></canvas>
+
+      <!-- Top bar link back -->
+      <header class="top-bar" style="position: absolute; top: 0; left: 0; right: 0; z-index: 100;">
+        <div class="brand">
+          <span class="brand-title">π Atlas</span>
+          <span style="font-size: 0.8rem; color: #6B6860; margin-left: 10px; font-family: var(--font-mono);">/reveal-demo</span>
+        </div>
+        <div class="top-right-links">
+          <a href="/" class="tab-btn" style="text-decoration: none; font-size: 0.82rem; padding: 4px 10px;">&larr; Back to Pi Atlas</a>
+        </div>
+      </header>
+
+      <!-- Demo Controls Instrument Panel -->
+      <div class="demo-controls-panel" id="demo-controls">
+        <div class="demo-header">
+          <div class="demo-title">
+            <span>Reveal Window Demo</span>
+            <span class="demo-pill">Isolated</span>
+          </div>
+          <span id="fps-counter" style="font-size: 0.75rem; font-family: var(--font-mono); color: #8E9B6B;">60 FPS</span>
+        </div>
+
+        <!-- 1. Slow-Motion Toggle (1x / 4x / 10x) -->
+        <div class="demo-row">
+          <div class="demo-label">
+            <span>Speed / Slow-Motion</span>
+            <span id="slowmo-value">1x (Normal)</span>
+          </div>
+          <div class="demo-btn-group" id="slowmo-group">
+            <button type="button" class="demo-btn active" data-mult="1.0">1x</button>
+            <button type="button" class="demo-btn" data-mult="4.0">4x (Slow)</button>
+            <button type="button" class="demo-btn" data-mult="10.0">10x (Ultra)</button>
+          </div>
+        </div>
+
+        <!-- 2. Base Duration Slider -->
+        <div class="demo-row">
+          <div class="demo-label">
+            <span>Base Slide Duration</span>
+            <span id="duration-value">1,700 ms</span>
+          </div>
+          <input type="range" id="duration-slider" class="demo-slider" min="800" max="4000" step="100" value="1700" />
+        </div>
+
+        <!-- 3. Easing Selector -->
+        <div class="demo-row">
+          <div class="demo-label">
+            <span>Easing Curve</span>
+          </div>
+          <select id="easing-select" class="demo-select">
+            <option value="cubic-bezier(0.22, 1, 0.36, 1)" selected>Default: cubic-bezier(0.22, 1, 0.36, 1) [Fast entry, soft settle]</option>
+            <option value="cubic-bezier(0.16, 1, 0.3, 1)">Snappier: cubic-bezier(0.16, 1, 0.3, 1)</option>
+            <option value="ease-out">Standard: ease-out</option>
+            <option value="ease-in-out">Standard: ease-in-out</option>
+            <option value="linear">Linear: linear</option>
+          </select>
+        </div>
+
+        <!-- 4. Sample Date Preset -->
+        <div class="demo-row">
+          <div class="demo-label">
+            <span>Sample Date</span>
+          </div>
+          <select id="sample-date-select" class="demo-select">
+            <option value="14051998">14 May 1998 (Hit: DDMMYY @ 1,203,449 · 11 occ)</option>
+            <option value="03141592">14 March 1592 (Hit: MMDDYYYY @ 1 · 1 occ)</option>
+            <option value="01012000">01 Jan 2000 (Hit: DDMMYY @ 54,892 · 14 occ)</option>
+          </select>
+        </div>
+
+        <!-- Trigger Button -->
+        <button type="button" id="btn-trigger-reveal" class="demo-action-btn">
+          Play Reveal Sequence
+        </button>
+
+        <div id="demo-status" class="demo-status-toast">
+          Ready. Tap Play Reveal Sequence.
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/revealDemo.ts"></script>
+  </body>
+</html>

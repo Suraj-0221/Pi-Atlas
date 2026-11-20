@@ -1,0 +1,661 @@
+/**
+ * Reveal Window Styles
+ * The only glass element in the app.
+ */
+
+:root {
+  --reveal-cell-width: 32px;
+  --reveal-slots-count: 19;
+  --reveal-glass-width: min(720px, 92vw);
+  --reveal-glass-height: 132px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --reveal-cell-width: 24px;
+    --reveal-slots-count: 11;
+  }
+}
+
+/* Dim overlay behind the glass window */
+.reveal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #1F1E1D;
+  opacity: 0;
+  pointer-events: auto;
+  z-index: 900;
+  will-change: opacity;
+}
+
+/* Glass window container centered vertically */
+.reveal-modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--reveal-glass-width);
+  max-height: 94vh;
+  z-index: 910;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.reveal-modal-container > * {
+  pointer-events: auto;
+}
+
+/* Glass window element */
+.reveal-glass-card {
+  position: relative;
+  width: 100%;
+  max-width: min(720px, 94vw);
+  border-radius: 18px;
+  background: rgba(250, 249, 245, 0.98); /* Solid paper surface #FAF9F5 */
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(31, 30, 29, 0.12);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.35),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 24px 28px 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+@supports not ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+  .reveal-glass-card {
+    background: #FAF9F5;
+  }
+}
+
+.reveal-card-corner-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(31, 30, 29, 0.06);
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  z-index: 20;
+}
+
+.reveal-card-corner-close:hover {
+  background: rgba(31, 30, 29, 0.12);
+  color: var(--text-primary);
+}
+
+/* Top 2px indeterminate progress line while searching */
+.reveal-progress-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: transparent;
+  overflow: hidden;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.reveal-progress-line.active {
+  opacity: 1;
+}
+
+.reveal-progress-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 35%;
+  background: var(--accent);
+  animation: indeterminate-sweep 1.2s infinite ease-in-out;
+}
+
+@keyframes indeterminate-sweep {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(200%); }
+  100% { transform: translateX(400%); }
+}
+
+/* Specular diagonal sweep (900ms one-shot) */
+.reveal-specular-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+  transform: translateX(-150%) skewX(-20deg);
+  z-index: 8;
+  opacity: 0;
+}
+
+/* Viewport for the 19 slots (11 on mobile) */
+.reveal-viewport-mask {
+  position: relative;
+  width: calc(var(--reveal-slots-count) * var(--reveal-cell-width));
+  height: 64px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: rgba(31, 30, 29, 0.04);
+  border-radius: 10px;
+  border: 1px solid rgba(31, 30, 29, 0.08);
+  margin-top: 4px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Ribbon track containing the real digits of pi */
+.reveal-ribbon-track {
+  display: flex;
+  position: absolute;
+  left: calc(-12 * var(--reveal-cell-width)); /* Slot 12 aligns with window left edge at rest */
+  top: 0;
+  bottom: 0;
+  align-items: center;
+  transform: translateX(0);
+}
+
+/* Individual digit cell */
+.reveal-digit-cell {
+  width: var(--reveal-cell-width);
+  height: 52px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 28px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: #1F1E1D;
+  user-select: none;
+  position: relative;
+  box-sizing: border-box;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .reveal-digit-cell {
+    font-size: 22px;
+  }
+}
+
+/* Matched digits: full ink with accent tint background */
+.reveal-digit-cell.is-match {
+  color: #1F1E1D;
+  background-color: rgba(255, 87, 34, 0.14);
+  border-radius: 4px;
+  opacity: 1 !important;
+}
+
+/* Context digits: settle to 45% opacity */
+.reveal-digit-cell.is-context {
+  opacity: 0.45;
+  transition: opacity 0.35s ease;
+}
+
+/* Accent 2px underline across matched digits */
+.reveal-underline-bar {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  height: 2px;
+  background-color: var(--accent);
+  transform-origin: left center;
+  transform: scaleX(0);
+  z-index: 5;
+}
+
+/* Subtitle letter label under matched digit cell */
+.reveal-letter-sub {
+  position: absolute;
+  bottom: 2px;
+  font-family: var(--font-serif);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.reveal-digit-cell.is-match .reveal-letter-sub {
+  opacity: 1;
+}
+
+/* Stacked piece rows for greedy pieces fallback */
+.reveal-pieces-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  box-sizing: border-box;
+}
+
+.reveal-piece-row {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.reveal-piece-digits {
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+}
+
+.reveal-piece-fly {
+  font-size: 12px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+/* Position counter below the glass window */
+.reveal-counter-section {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  user-select: none;
+}
+
+.reveal-counter-number {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 36px;
+  font-weight: 500;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.reveal-counter-total {
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+  letter-spacing: 0.03em;
+}
+
+/* Result text & action buttons container */
+.reveal-results-block {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(6px);
+  will-change: transform, opacity;
+  width: 100%;
+  max-width: min(640px, 90vw);
+}
+
+.reveal-headline {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  line-height: 1.25;
+}
+
+.reveal-stat-line {
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  background: rgba(255, 87, 34, 0.08);
+  border: 1px solid rgba(255, 87, 34, 0.2);
+  border-radius: 12px;
+  padding: 3px 12px;
+  margin: 4px 0 8px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.reveal-meta-line {
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.reveal-missed-line {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Action button bar */
+.reveal-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.reveal-btn-fly {
+  background-color: var(--accent);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 18px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(255, 87, 34, 0.25);
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.reveal-btn-fly:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.reveal-btn-secondary {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(31, 30, 29, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  color: #1F1E1D;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.reveal-btn-secondary:hover {
+  background: #FFFFFF;
+}
+
+.reveal-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 0.78rem;
+  color: #6B6860;
+}
+
+.reveal-step-btn {
+  background: transparent;
+  border: 1px solid #E3E0D5;
+  border-radius: 3px;
+  padding: 1px 7px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: #1F1E1D;
+}
+
+.reveal-step-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-specular-sweep,
+  .reveal-progress-line::after {
+    animation: none !important;
+    display: none !important;
+  }
+}
+
+/* Telephone Cipher Decoder Deck (for Name Flow) */
+.reveal-cipher-deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.reveal-cipher-tagline {
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.reveal-cipher-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.reveal-cipher-letter-tile {
+  width: 34px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(31, 30, 29, 0.15);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.reveal-cipher-letter-tile.is-locked {
+  border-color: var(--accent);
+  background: rgba(255, 87, 34, 0.08);
+}
+
+.reveal-cipher-letter-char {
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.reveal-cipher-keypad-sub {
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 8px;
+  color: var(--text-secondary);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.reveal-cipher-arrow {
+  color: var(--accent);
+  font-size: 11px;
+  opacity: 0.7;
+  display: flex;
+  justify-content: center;
+  width: 34px;
+}
+
+.reveal-cipher-digit-tile {
+  width: 34px;
+  height: 38px;
+  background: #FFFFFF;
+  border: 1px solid rgba(31, 30, 29, 0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.reveal-cipher-digit-tile.is-spinning {
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+.reveal-cipher-digit-tile.is-locked {
+  background-color: var(--accent);
+  color: #FFFFFF;
+  border-color: var(--accent);
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(255, 87, 34, 0.3);
+}
+
+@media (max-width: 768px) {
+  .reveal-cipher-letter-tile,
+  .reveal-cipher-digit-tile,
+  .reveal-cipher-arrow {
+    width: 26px;
+  }
+  .reveal-cipher-letter-tile,
+  .reveal-cipher-digit-tile {
+    height: 32px;
+  }
+  .reveal-cipher-letter-char {
+    font-size: 13px;
+  }
+  .reveal-cipher-digit-tile {
+    font-size: 14px;
+  }
+}
+
+/* Duel Mode Stacked Rows (Task 4) */
+.reveal-duel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin: 14px 0 16px;
+}
+
+.reveal-duel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(31, 30, 29, 0.12);
+  border-radius: 8px;
+  padding: 10px 14px;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.reveal-duel-row.is-winner {
+  border-color: var(--accent);
+  background: rgba(255, 87, 34, 0.06);
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.15);
+}
+
+.reveal-duel-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.reveal-duel-date-label {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.reveal-duel-pos-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.reveal-duel-mini-ribbon {
+  display: flex;
+  gap: 2px;
+  overflow: hidden;
+  font-family: "JetBrains Mono", var(--font-mono);
+  font-size: 12px;
+}
+
+.reveal-duel-cell {
+  width: 20px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(31, 30, 29, 0.05);
+  border-radius: 3px;
+  color: var(--text-secondary);
+}
+
+.reveal-duel-cell.is-match {
+  background: var(--accent);
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.reveal-duel-fly-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 0.76rem;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.reveal-duel-fly-btn:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .reveal-duel-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .reveal-duel-meta {
+    width: 100%;
+  }
+  .reveal-duel-mini-ribbon {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .reveal-duel-fly-btn {
+    width: 100%;
+  }
+}

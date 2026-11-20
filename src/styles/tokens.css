@@ -1,0 +1,56 @@
+:root {
+  /* Editorial Paper Surface & Text */
+  --bg-paper: #F5F4EE;
+  --bg-surface: #FAF9F5;
+  --border-color: #E3E0D5;
+  --border-subtle: #ECEAE2;
+  --text-primary: #1F1E1D;
+  --text-secondary: #6B6860;
+  --text-muted: #9E9B93;
+
+  /* Vibrant Orange Accent for Dates & Matches */
+  --accent: #FF5722;
+  --accent-hover: #E64A19;
+  --accent-tint: rgba(255, 87, 34, 0.16);
+  --accent-solid-tint: #FFE0D6;
+
+  /* Clean Grey for other digits */
+  --digit-grey: #8E8B83;
+  --digit-grey-light: #B8B5AD;
+  --digit-grey-bg: #ECEAE3;
+
+  /* Digit 0-9 Muted Earth Tone Ramp for Overview */
+  --digit-0: #E8E5DD;
+  --digit-1: #DDD9CE;
+  --digit-2: #D1CCBF;
+  --digit-3: #C4BEAF;
+  --digit-4: #B7B0A0;
+  --digit-5: #9E9786;
+  --digit-6: #888272;
+  --digit-7: #706B5D;
+  --digit-8: #8A938C;
+  --digit-9: #79848A;
+
+  /* Typography */
+  --font-serif: "Newsreader Variable", "Newsreader", "Source Serif 4", Georgia, serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", "SF Mono", monospace;
+
+  /* Unified Type Scale (Task 7): headlines 44/28, body 15, labels 12 mono */
+  --font-size-headline-lg: 44px;
+  --font-size-headline-md: 28px;
+  --font-size-body: 15px;
+  --font-size-label: 12px;
+
+  /* Unified Spacing Scale (Task 7): 4, 8, 16, 24, 40 */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-40: 40px;
+
+  /* Spacing & Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
