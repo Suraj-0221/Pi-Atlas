@@ -69,7 +69,8 @@ export async function loadPiDigits(
   };
 
   const fetchChunk = async (index: number): Promise<Uint8Array> => {
-    const filename = `/pi_${index.toString().padStart(2, '0')}.bin`;
+    const base = (import.meta.env.BASE_URL || './').replace(/\/$/, '');
+    const filename = `${base}/pi_${index.toString().padStart(2, '0')}.bin`;
     const res = await fetch(filename);
     if (!res.ok) {
       throw new Error(`Failed to load ${filename}: ${res.status}`);
