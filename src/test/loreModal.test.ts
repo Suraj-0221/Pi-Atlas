@@ -47,7 +47,7 @@ describe('LoreModal Specifications & Slide Data', () => {
     expect(s6.isFinal).toBe(true);
   });
 
-  it('word stagger timing splits into words with 40ms interval', () => {
+  it('word stagger timing splits into words with 40ms interval and preserves spaces', () => {
     const hook = 'Somewhere in π, this exact sentence is already written.';
     const words = hook.split(' ');
     expect(words.length).toBeGreaterThan(5);
@@ -57,5 +57,11 @@ describe('LoreModal Specifications & Slide Data', () => {
     expect(delays[1]).toBe(40);
     expect(delays[2]).toBe(80);
     expect(delays[3]).toBe(120);
+
+    // Verify words don't have trailing spaces in textContent and are joined by separate space nodes
+    expect(words[0]).toBe('Somewhere');
+    expect(words[1]).toBe('in');
+    expect(words[2]).toBe('π,');
+    expect(words.join(' ')).toBe(hook);
   });
 });

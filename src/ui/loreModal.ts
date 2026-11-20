@@ -504,8 +504,12 @@ export class LoreModal {
       const span = document.createElement('span');
       span.className = 'lore-word';
       span.style.animationDelay = `${i * 40}ms`;
-      span.textContent = word + (i < words.length - 1 ? ' ' : '');
+      span.textContent = word;
       this.hookHeadingEl.appendChild(span);
+
+      if (i < words.length - 1) {
+        this.hookHeadingEl.appendChild(document.createTextNode(' '));
+      }
     });
   }
 
