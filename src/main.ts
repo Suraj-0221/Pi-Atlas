@@ -561,14 +561,22 @@ async function bootstrap() {
           frame.style.width = `${rect.width}px`;
           frame.style.height = `${rect.height}px`;
 
-          caption.style.left = `${rect.x}px`;
-          caption.style.width = `${rect.width}px`;
-          caption.style.top = `${rect.y + rect.height + 14}px`;
+          // On mobile screens (<= 768px), the bottom sheet hosts the status and actions.
+          // The floating canvas caption plate is desktop-only to avoid duplicate overlap.
+          if (window.innerWidth > 768) {
+            caption.style.display = 'flex';
+            caption.style.left = `${rect.x}px`;
+            caption.style.width = `${rect.width}px`;
+            caption.style.top = `${rect.y + rect.height + 14}px`;
 
-          if (title) title.textContent = `Your image, in ${lastImageMsg.pixelCount.toLocaleString()} digits of π`;
-          if (sub) sub.textContent = `digits ${(lastImageMsg.startPosition + 1).toLocaleString()} to ${(lastImageMsg.endPosition + 1).toLocaleString()}`;
+            if (title) title.textContent = `Your image, in ${lastImageMsg.pixelCount.toLocaleString()} digits of π`;
+            if (sub) sub.textContent = `digits ${(lastImageMsg.startPosition + 1).toLocaleString()} to ${(lastImageMsg.endPosition + 1).toLocaleString()}`;
 
-          caption.classList.add('visible');
+            caption.classList.add('visible');
+          } else {
+            caption.classList.remove('visible');
+            caption.style.display = 'none';
+          }
         }
       }
     };

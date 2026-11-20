@@ -54,6 +54,7 @@ export class ImagePanel {
   } | null = null;
 
   // DOM Elements
+  private headlineEl!: HTMLElement;
   private chooseViewEl!: HTMLElement;
   private activeViewEl!: HTMLElement;
   private previewCanvas!: HTMLCanvasElement;
@@ -71,7 +72,7 @@ export class ImagePanel {
 
   public render() {
     this.container.innerHTML = `
-      <h1 class="stage-headline">Can a photo hide in π?</h1>
+      <h1 class="stage-headline" id="img-stage-headline">Can a photo hide in π?</h1>
       <div class="panel-body">
         <!-- CHOOSE VIEW: Dropzone + Chips (Task 5a) -->
         <div id="img-stage-choose" class="img-stage-view">
@@ -194,6 +195,7 @@ export class ImagePanel {
       </div>
     `;
 
+    this.headlineEl = this.container.querySelector('#img-stage-headline') as HTMLElement;
     this.chooseViewEl = this.container.querySelector('#img-stage-choose') as HTMLElement;
     this.activeViewEl = this.container.querySelector('#img-active-view') as HTMLElement;
     this.previewCanvas = this.container.querySelector('#img-dither-preview') as HTMLCanvasElement;
@@ -360,7 +362,8 @@ export class ImagePanel {
     const pCtx = this.previewCanvas.getContext('2d')!;
     pCtx.drawImage(this.activeCanvas, 0, 0, prep.width, prep.height);
 
-    // Show active view, hide choose view
+    // Show active view, hide choose view and stage headline
+    if (this.headlineEl) this.headlineEl.style.display = 'none';
     this.chooseViewEl.style.display = 'none';
     this.activeViewEl.style.display = 'block';
     this.finalButtonsEl.style.display = 'none';
@@ -406,6 +409,7 @@ export class ImagePanel {
   public resetToChoose() {
     this.activeCanvas = null;
     this.currentResult = null;
+    if (this.headlineEl) this.headlineEl.style.display = '';
     this.activeViewEl.style.display = 'none';
     this.chooseViewEl.style.display = 'block';
     this.adjustRowEl.style.display = 'none';
