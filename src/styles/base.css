@@ -626,21 +626,23 @@ canvas#digit-canvas {
     transform: none !important;
     width: 100% !important;
     max-width: 100% !important;
-    max-height: 55vh;
+    max-height: 60vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
     border-left: none !important;
     border-right: none !important;
     border-bottom: none !important;
     padding: 0 16px 16px 16px !important;
-    transition: transform 0.25s ease-in-out !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
     background: var(--bg-surface) !important;
     border: 1px solid var(--border-color) !important;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08) !important;
   }
 
   .panel-card-wrapper.collapsed {
-    transform: translateY(calc(100% - 56px)) !important;
+    transform: translateY(calc(100% - 50px)) !important;
   }
 
   .panel-card-wrapper.collapsed-bar {
@@ -657,17 +659,23 @@ canvas#digit-canvas {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 56px;
+    height: 50px;
     cursor: pointer;
     user-select: none;
     gap: 6px;
+    touch-action: pan-y;
   }
 
   .handle-bar {
-    width: 36px;
+    width: 38px;
     height: 4px;
     background: var(--border-color);
     border-radius: 2px;
+    transition: background-color 0.15s ease;
+  }
+
+  .mobile-sheet-handle:active .handle-bar {
+    background: var(--accent);
   }
 
   #handle-title {
@@ -677,23 +685,61 @@ canvas#digit-canvas {
   }
 
   .top-bar {
-    padding: 0 12px;
-    height: 52px;
+    padding: 0 10px;
+    height: 50px;
+    gap: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand {
+    flex-shrink: 0;
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+  }
+
+  .tabs-container {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .tabs-container .tab-btn {
+    min-height: 38px;
+    padding: 6px 10px;
+    font-size: 0.84rem;
+  }
+
+  .top-right-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 1;
+  }
+
+  .top-right-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .top-right-links .tab-btn {
+    min-height: 38px;
+    padding: 6px 8px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   /* Tap targets at least 44px on mobile (Task 7) */
-  .tab-btn {
-    min-height: 44px;
-    padding: 8px 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-size-body);
-  }
-
   .stage-chip-btn {
-    min-height: 44px;
-    padding: 8px 14px;
+    min-height: 40px;
+    padding: 6px 12px;
     display: inline-flex;
     align-items: center;
     font-size: var(--font-size-body);
@@ -701,7 +747,7 @@ canvas#digit-canvas {
 
   .keypad-key {
     min-height: 44px;
-    padding: 4px 6px;
+    padding: 4px 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -709,42 +755,51 @@ canvas#digit-canvas {
 
   .reveal-btn-fly,
   .reveal-btn-secondary {
-    min-height: 44px;
-    padding: 10px 16px;
+    min-height: 42px;
+    padding: 8px 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
   .link-btn {
-    min-height: 44px;
+    min-height: 40px;
     display: inline-flex;
     align-items: center;
   }
 
   .preset-pill {
-    min-height: 44px;
+    min-height: 40px;
     display: inline-flex;
     align-items: center;
   }
 
   .stage-headline {
-    font-size: 28px;
+    font-size: clamp(22px, 6vw, 28px);
+    line-height: 1.22;
     margin-bottom: var(--space-8);
   }
 
+  .stage-inputs-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: nowrap;
+  }
+
   .stage-mono-input {
-    font-size: 26px;
-    width: 54px;
+    font-size: clamp(20px, 5.5vw, 26px);
+    width: clamp(44px, 12vw, 54px);
     padding: 2px 0 4px;
+    text-align: center;
   }
 
   .stage-mono-input.year-input {
-    width: 88px;
+    width: clamp(72px, 20vw, 88px);
   }
 
   .stage-input-sep {
-    font-size: 22px;
+    font-size: clamp(18px, 5vw, 22px);
   }
 
   .readout-bar {
@@ -754,6 +809,122 @@ canvas#digit-canvas {
 
   .overview-toggle-group {
     display: none;
+  }
+
+  /* Curiosities & Game Mobile Adaptations */
+  .curiosities-card {
+    width: min(520px, 94vw);
+    max-height: 86vh;
+    padding: 18px 16px;
+    border-radius: 14px;
+  }
+
+  .curiosities-title {
+    font-size: 22px;
+  }
+
+  .curiosity-item-card {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .curiosity-item-title {
+    font-size: 15px;
+  }
+
+  .curiosity-item-desc {
+    font-size: 11px;
+  }
+
+  .curiosity-item-digits {
+    font-size: 13px;
+    padding: 4px 8px;
+    margin-left: 6px;
+  }
+
+  .pi-game-card {
+    width: min(520px, 94vw);
+    max-height: 90vh;
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+
+  .pi-game-tape-window {
+    padding: 8px 10px;
+  }
+
+  .pi-game-slot {
+    width: 24px;
+    height: 30px;
+    font-size: 15px;
+  }
+
+  .pi-game-keypad {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .pi-key-btn {
+    height: 46px;
+    font-size: 19px;
+    border-radius: 8px;
+    touch-action: manipulation;
+  }
+
+  .pi-key-btn:active {
+    transform: scale(0.95);
+    background: var(--border-subtle);
+  }
+}
+
+@media (max-width: 480px) {
+  .top-bar {
+    padding: 0 6px;
+    gap: 4px;
+  }
+
+  .brand-title {
+    font-size: 1.05rem;
+  }
+
+  .tabs-container .tab-btn {
+    min-height: 36px;
+    padding: 4px 7px;
+    font-size: 0.8rem;
+  }
+
+  .top-right-links .tab-btn {
+    min-height: 36px;
+    padding: 4px 6px;
+    font-size: 0.74rem;
+  }
+
+  .sound-text {
+    display: none;
+  }
+
+  .sound-icon {
+    font-size: 1rem;
+  }
+
+  #img-active-view > div {
+    gap: 10px !important;
+  }
+
+  .img-preview-box {
+    width: 108px !important;
+    height: 108px !important;
+  }
+
+  .detail-btn {
+    padding: 4px 6px !important;
+    font-size: 0.72rem !important;
+    min-height: 34px;
+  }
+
+  .img-large-dropzone {
+    padding: 18px 12px;
   }
 }
 

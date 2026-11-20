@@ -67,6 +67,7 @@ function collapseStageBlock() {
 
 function expandStageBlock() {
   panelWrapper.classList.remove('collapsed-bar');
+  panelWrapper.classList.remove('collapsed');
   panelWrapper.classList.add('stage-mode');
   if (btnNewSearch) {
     btnNewSearch.style.display = 'none';
@@ -746,6 +747,18 @@ async function bootstrap() {
     });
 
     if (mobileSheetHandle) {
+      let touchStartY = 0;
+      mobileSheetHandle.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+      mobileSheetHandle.addEventListener('touchend', (e) => {
+        const deltaY = e.changedTouches[0].clientY - touchStartY;
+        if (deltaY > 30) {
+          panelWrapper.classList.add('collapsed');
+        } else if (deltaY < -30) {
+          panelWrapper.classList.remove('collapsed');
+        }
+      }, { passive: true });
       mobileSheetHandle.addEventListener('click', () => {
         panelWrapper.classList.toggle('collapsed');
       });
@@ -841,7 +854,9 @@ async function bootstrap() {
     const soundLabel = document.getElementById('sound-label');
     const updateSoundUI = () => {
       if (soundLabel) {
-        soundLabel.textContent = sound.isEnabled() ? '🔊 Sound: On' : '🔈 Sound: Off';
+        soundLabel.innerHTML = sound.isEnabled()
+          ? '<span class="sound-icon">🔊</span><span class="sound-text"> Sound: On</span>'
+          : '<span class="sound-icon">🔈</span><span class="sound-text"> Sound: Off</span>';
       }
     };
     updateSoundUI();

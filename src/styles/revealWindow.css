@@ -643,19 +643,85 @@
 }
 
 @media (max-width: 768px) {
-  .reveal-duel-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  .reveal-glass-card {
+    padding: 18px 14px;
+    max-width: min(720px, 95vw);
+    border-radius: 14px;
   }
-  .reveal-duel-meta {
+
+  .reveal-headline {
+    font-size: clamp(18px, 4.5vw, 24px);
+  }
+
+  .reveal-stat-badge {
+    font-size: clamp(18px, 5vw, 24px);
+  }
+
+  .reveal-chips-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .reveal-chip {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    font-size: 0.76rem;
+    padding: 4px 10px;
+  }
+
+  .reveal-actions-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
     width: 100%;
   }
+
+  .reveal-btn-fly {
+    flex: 1 1 100%;
+    text-align: center;
+    justify-content: center;
+    min-height: 42px;
+  }
+
+  .reveal-btn-secondary {
+    flex: 1 1 auto;
+    text-align: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 8px 12px;
+  }
+
+  .reveal-stepper {
+    flex: 1 1 100%;
+    justify-content: center;
+    margin-bottom: 2px;
+  }
+
+  .reveal-duel-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .reveal-duel-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
   .reveal-duel-mini-ribbon {
     width: 100%;
     overflow-x: auto;
+    justify-content: center;
   }
+
   .reveal-duel-fly-btn {
     width: 100%;
+    text-align: center;
+    min-height: 40px;
   }
 }

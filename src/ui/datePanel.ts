@@ -67,11 +67,11 @@ export class DatePanel {
       <h1 class="stage-headline" id="dob-headline">Where is your birthday in π?</h1>
       <form id="dob-form" class="panel-body">
         <div class="stage-inputs-row">
-          <input type="text" id="dob-day" class="stage-mono-input" placeholder="DD" maxlength="2" required aria-label="Day" />
+          <input type="text" id="dob-day" class="stage-mono-input" placeholder="DD" maxlength="2" required aria-label="Day" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
           <span class="stage-input-sep">/</span>
-          <input type="text" id="dob-month" class="stage-mono-input" placeholder="MM" maxlength="2" required aria-label="Month" />
+          <input type="text" id="dob-month" class="stage-mono-input" placeholder="MM" maxlength="2" required aria-label="Month" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
           <span class="stage-input-sep">/</span>
-          <input type="text" id="dob-year" class="stage-mono-input year-input" placeholder="YYYY" maxlength="4" required aria-label="Year" />
+          <input type="text" id="dob-year" class="stage-mono-input year-input" placeholder="YYYY" maxlength="4" required aria-label="Year" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
         </div>
 
         <!-- Compare Row (Task 4) -->
@@ -84,11 +84,11 @@ export class DatePanel {
           <div id="dob-compare-row" style="display: none; margin-top: 8px;">
             <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px;">Compare with:</div>
             <div class="stage-inputs-row" style="justify-content: flex-start;">
-              <input type="text" id="dob-day-2" class="stage-mono-input" placeholder="DD" maxlength="2" aria-label="Day 2" />
+              <input type="text" id="dob-day-2" class="stage-mono-input" placeholder="DD" maxlength="2" aria-label="Day 2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
               <span class="stage-input-sep">/</span>
-              <input type="text" id="dob-month-2" class="stage-mono-input" placeholder="MM" maxlength="2" aria-label="Month 2" />
+              <input type="text" id="dob-month-2" class="stage-mono-input" placeholder="MM" maxlength="2" aria-label="Month 2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
               <span class="stage-input-sep">/</span>
-              <input type="text" id="dob-year-2" class="stage-mono-input year-input" placeholder="YYYY" maxlength="4" aria-label="Year 2" />
+              <input type="text" id="dob-year-2" class="stage-mono-input year-input" placeholder="YYYY" maxlength="4" aria-label="Year 2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
               <button type="button" id="btn-close-compare" class="tab-btn" style="margin-left: 6px; padding: 2px 8px; font-size: 0.75rem;" title="Cancel comparison">✕</button>
             </div>
           </div>
