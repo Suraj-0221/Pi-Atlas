@@ -1,5 +1,6 @@
 @import './tokens.css';
 @import './revealWindow.css';
+@import './loreModal.css';
 
 *, *::before, *::after {
   box-sizing: border-box;

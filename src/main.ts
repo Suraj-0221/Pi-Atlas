@@ -29,6 +29,7 @@ import { sound } from './viz/sound.ts';
 import { parseDeepLink, buildDateUrl, buildNameUrl, buildVsUrl } from './ui/deepLink.ts';
 import { buildDateLookupTable, searchDateFast, computeDuelVerdict } from './encode/dateSearch.ts';
 import { PiGame } from './ui/piGame.ts';
+import { LoreModal } from './ui/loreModal.ts';
 
 const canvas = document.getElementById('digit-canvas') as HTMLCanvasElement;
 const inputPanelContainer = document.getElementById('input-panel') as HTMLElement;
@@ -49,6 +50,7 @@ let namePanel: NamePanel;
 let imagePanel: ImagePanel;
 let revealWindow: RevealWindow;
 let piGame: PiGame;
+let loreModal: LoreModal;
 let minimap: Minimap | null = null;
 let stopDrift: () => void = () => {};
 let lastImageMsg: any = null;
@@ -864,6 +866,39 @@ async function bootstrap() {
       piGame.open();
     });
 
+    // 13c. Lore Modal (The Story of π in 6 Slides)
+    loreModal = new LoreModal(document.getElementById('app') || document.body, {
+      onFindYours: () => {
+        expandStageBlock();
+        tabManager?.setTab('date');
+        datePanel?.clearAndFocus();
+      },
+      onExploreCuriosities: () => {
+        openCuriosities();
+      }
+    });
+
+    const btnOpenLore = document.getElementById('btn-open-lore');
+    btnOpenLore?.addEventListener('click', () => {
+      visualizer.clearImageGather();
+      visualizer.setDim(0);
+      const overlay = document.getElementById('img-cinematic-overlay');
+      if (overlay) overlay.style.display = 'none';
+      loreModal.open(0, btnOpenLore);
+    });
+
+    // Auto-open on first visit only (~600ms after load)
+    try {
+      const seen = localStorage.getItem('piatlas_lore_seen');
+      if (!seen) {
+        window.setTimeout(() => {
+          loreModal.open(0, btnOpenLore);
+        }, 600);
+      }
+    } catch {
+      // LocalStorage blocked/unavailable: safe fallback
+    }
+
     // 14. Sound Synthesizer UI Toggle
     const btnToggleSound = document.getElementById('btn-toggle-sound');
     const soundLabel = document.getElementById('sound-label');
@@ -960,7 +995,8 @@ async function bootstrap() {
         imagePanel,
         revealWindow,
         aboutSheet,
-        piGame
+        piGame,
+        loreModal
       };
       console.log('[Pi Atlas WebGL2] Initialized.');
     }
@@ -1058,7 +1094,8 @@ function setupKeyboardShortcuts() {
   window.addEventListener('keydown', (e) => {
     if (
       e.target instanceof HTMLInputElement ||
-      e.target instanceof HTMLTextAreaElement
+      e.target instanceof HTMLTextAreaElement ||
+      loreModal?.isModalOpen()
     ) {
       return;
     }

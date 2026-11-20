@@ -1,0 +1,640 @@
+/* ============================================================
+   π Atlas · Lore Modal (The Story of π in 6 Slides)
+   Editorial Paper Aesthetic: Warm Cream, Ink, #FF5722 Accent
+   No generic AI gradients, no neon, no glow overload
+   ============================================================ */
+
+.lore-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: rgba(31, 30, 29, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 980;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lore-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.lore-open {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+/* ------------------------------------------------------------
+   Desktop Card Layout (>= 900px)
+   Roughly 16:10, max-width 860px, 2-column layout
+   ------------------------------------------------------------ */
+.lore-card {
+  position: relative;
+  width: min(860px, 92vw);
+  min-height: 520px;
+  max-height: 90dvh;
+  aspect-ratio: 16 / 10;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+  display: grid;
+  grid-template-columns: 38% 62%;
+  overflow: hidden;
+  box-sizing: border-box;
+  transform: translateY(16px) scale(0.985);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.lore-overlay.is-open .lore-card {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Close Button (reusing Curiosities & Reveal corner style) */
+.lore-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(31, 30, 29, 0.06);
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  z-index: 30;
+}
+
+.lore-close-btn:hover,
+.lore-close-btn:focus-visible {
+  background: rgba(31, 30, 29, 0.12);
+  color: var(--text-primary);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Mobile Sheet Drag Handle */
+.lore-drag-handle {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   LEFT COLUMN: Visual Stage
+   ------------------------------------------------------------ */
+.lore-visual-panel {
+  position: relative;
+  background: #F2EFEB;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+}
+
+.lore-visual-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ------------------------------------------------------------
+   RIGHT COLUMN: Story Content & Controls
+   ------------------------------------------------------------ */
+.lore-content-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 36px 28px 36px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Top Meta Bar: Slide Indicator & Skip */
+.lore-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-right: 36px; /* space for close button */
+}
+
+.lore-tagline {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.lore-btn-skip {
+  background: none;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px 10px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s ease;
+}
+
+.lore-btn-skip:hover,
+.lore-btn-skip:focus-visible {
+  color: var(--text-primary);
+  outline: none;
+  text-decoration: underline;
+}
+
+/* Slide Body */
+.lore-slide-viewport {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  margin: 4px 0 16px;
+}
+
+.lore-slide-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lore-slide-content.slide-exit-left {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
+.lore-slide-content.slide-exit-right {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+.lore-slide-content.slide-enter-left {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
+.lore-slide-content.slide-enter-right {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+/* Hook Line (Big Serif Display) */
+.lore-hook-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 3.2vw, 42px);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  letter-spacing: -0.015em;
+}
+
+/* Word-by-word reveal */
+.lore-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: loreWordFadeIn 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes loreWordFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Support Text */
+.lore-support-text {
+  font-family: var(--font-serif);
+  font-size: clamp(15px, 1.4vw, 17px);
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+/* Optional Small Print / Note */
+.lore-small-print {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-top: 8px;
+}
+
+/* Slide 6 Secondary Curiosities Link */
+.lore-curiosities-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.lore-curiosities-link:hover,
+.lore-curiosities-link:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+
+/* ------------------------------------------------------------
+   FOOTER: Dots & Navigation Buttons
+   ------------------------------------------------------------ */
+.lore-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+  min-height: 52px;
+}
+
+/* Progress Dots */
+.lore-dots-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lore-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--border-color);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 24px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.lore-dot::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.lore-dot:hover::after {
+  background: var(--text-muted);
+}
+
+.lore-dot.is-active::after {
+  width: 22px;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+/* Buttons */
+.lore-nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lore-btn-back {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 8px 16px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lore-btn-back:hover:not(:disabled) {
+  background: rgba(31, 30, 29, 0.04);
+  color: var(--text-primary);
+}
+
+.lore-btn-back:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: transparent;
+}
+
+.lore-btn-next,
+.lore-btn-cta {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 22px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.lore-btn-next:hover,
+.lore-btn-cta:hover {
+  background: var(--accent-hover);
+}
+
+.lore-btn-next:active,
+.lore-btn-cta:active {
+  transform: scale(0.98);
+}
+
+/* ------------------------------------------------------------
+   MOBILE LAYOUT (< 900px, Portrait)
+   Bottom sheet, full width, up to 88dvh, rounded top corners
+   Single column: visual strip (top ~28%), hook, text, sticky footer
+   Nothing may scroll inside a slide!
+   ------------------------------------------------------------ */
+@media (max-width: 899px) {
+  .lore-overlay {
+    align-items: flex-end;
+  }
+
+  .lore-card {
+    width: 100%;
+    max-width: 100%;
+    min-height: auto;
+    height: auto;
+    max-height: 88dvh;
+    aspect-ratio: auto;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr auto;
+    transform: translateY(100%);
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.22);
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  }
+
+  .lore-overlay.is-open .lore-card {
+    transform: translateY(0);
+  }
+
+  /* Drag Handle on Mobile */
+  .lore-drag-handle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    width: 100%;
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .lore-drag-bar {
+    width: 40px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+  }
+
+  .lore-close-btn {
+    top: 8px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Visual strip on top (~26-28% of sheet height) */
+  .lore-visual-panel {
+    height: clamp(100px, 25vh, 150px);
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  /* Content Panel on Mobile */
+  .lore-content-panel {
+    padding: 12px 18px 8px 18px;
+    overflow: hidden;
+  }
+
+  .lore-top-bar {
+    margin-bottom: 4px;
+    padding-right: 0;
+  }
+
+  .lore-tagline {
+    font-size: 10px;
+  }
+
+  .lore-btn-skip {
+    font-size: 10px;
+    padding: 4px 6px;
+    min-height: 36px;
+  }
+
+  .lore-slide-viewport {
+    margin: 2px 0 8px;
+    overflow: hidden;
+  }
+
+  /* Tightened fonts on mobile to prevent ANY internal scrolling */
+  .lore-hook-heading {
+    font-size: clamp(20px, 5.2vw, 26px);
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+
+  .lore-support-text {
+    font-size: clamp(13px, 3.6vw, 15px);
+    line-height: 1.38;
+    margin-bottom: 4px;
+  }
+
+  .lore-small-print {
+    font-size: 11px;
+    line-height: 1.25;
+    margin-top: 4px;
+  }
+
+  .lore-curiosities-link {
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  /* Footer on Mobile */
+  .lore-footer {
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+    min-height: auto;
+  }
+
+  .lore-dots-container {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .lore-nav-buttons {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .lore-btn-back {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+  }
+
+  .lore-btn-next,
+  .lore-btn-cta {
+    flex: 1;
+    text-align: center;
+    padding: 10px 16px;
+  }
+}
+
+/* ------------------------------------------------------------
+   SHORT LANDSCAPE PHONE FALLBACK (height < 500px)
+   Fall back to scaled 2-column layout to avoid scrolling
+   ------------------------------------------------------------ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .lore-overlay {
+    align-items: center;
+  }
+
+  .lore-card {
+    width: min(780px, 94vw);
+    max-height: 94dvh;
+    min-height: auto;
+    aspect-ratio: auto;
+    border-radius: 14px;
+    grid-template-columns: 36% 64%;
+    grid-template-rows: 1fr;
+    transform: translateY(16px) scale(0.985);
+    padding-bottom: 0;
+  }
+
+  .lore-drag-handle {
+    display: none;
+  }
+
+  .lore-visual-panel {
+    height: 100%;
+    border-right: 1px solid var(--border-color);
+    border-bottom: none;
+  }
+
+  .lore-content-panel {
+    padding: 16px 20px 14px 20px;
+  }
+
+  .lore-hook-heading {
+    font-size: clamp(18px, 3.5vh, 22px);
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+
+  .lore-support-text {
+    font-size: clamp(11px, 2.8vh, 13px);
+    line-height: 1.35;
+    margin-bottom: 4px;
+  }
+
+  .lore-small-print {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .lore-footer {
+    padding-top: 6px;
+    min-height: 38px;
+    flex-direction: row;
+  }
+
+  .lore-dots-container {
+    width: auto;
+  }
+
+  .lore-nav-buttons {
+    width: auto;
+  }
+
+  .lore-btn-back,
+  .lore-btn-next,
+  .lore-btn-cta {
+    padding: 6px 14px;
+    min-height: 36px;
+    font-size: 12px;
+  }
+}
+
+/* ------------------------------------------------------------
+   REDUCED MOTION SUPPORT
+   Crossfade only, no translation, no word stagger
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .lore-overlay,
+  .lore-card,
+  .lore-slide-content,
+  .lore-btn-next,
+  .lore-btn-cta,
+  .lore-dot {
+    transition: none !important;
+  }
+
+  .lore-word {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .lore-slide-content.slide-exit-left,
+  .lore-slide-content.slide-exit-right,
+  .lore-slide-content.slide-enter-left,
+  .lore-slide-content.slide-enter-right {
+    transform: none !important;
+    opacity: 0 !important;
+  }
+}
