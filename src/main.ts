@@ -58,6 +58,7 @@ const btnNewSearch = document.getElementById('btn-new-search') as HTMLButtonElem
 function collapseStageBlock() {
   panelWrapper.classList.remove('stage-mode');
   panelWrapper.classList.add('collapsed-bar');
+  panelWrapper.classList.add('collapsed');
   if (btnNewSearch) {
     btnNewSearch.style.display = 'inline-block';
   }
@@ -1010,10 +1011,27 @@ function flyToDigit(
 
   announce(`${label || 'Match'} at position ${(startIndex + 1).toLocaleString()}`);
 
+  const targetZoom = 32.0;
+  let targetY = y + 0.5;
+
+  // On mobile (<= 768px), if the bottom sheet is expanded, center the match within the unobstructed visible area above the sheet
+  if (window.innerWidth <= 768 && panelWrapper) {
+    const isCollapsed = panelWrapper.classList.contains('collapsed') || panelWrapper.classList.contains('collapsed-bar');
+    if (!isCollapsed) {
+      const sheetRect = panelWrapper.getBoundingClientRect();
+      const topBarHeight = 50;
+      const sheetTop = sheetRect.top > 0 ? sheetRect.top : window.innerHeight * 0.45;
+      const unobstructedCenterY = (topBarHeight + sheetTop) / 2;
+      const screenCenterY = window.innerHeight / 2;
+      const offsetPx = unobstructedCenterY - screenCenterY;
+      targetY -= (offsetPx / targetZoom);
+    }
+  }
+
   animator.flyTo({
     targetX: x + length / 2,
-    targetY: y + 0.5,
-    targetZoom: 32.0,
+    targetY,
+    targetZoom,
     onUpdate: () => visualizer.requestRender(),
     onComplete: () => {
       readoutBar.update(

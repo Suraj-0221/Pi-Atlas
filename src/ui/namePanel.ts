@@ -98,6 +98,13 @@ export class NamePanel {
         <!-- Live status line under dial (Task 4b) -->
         <div id="name-live-status" class="name-live-status stage-hide-collapsed"></div>
 
+        <!-- Primary button "Reveal in π" (Task 4c) - placed above keypad for instant mobile visibility -->
+        <div style="margin-top: 6px; margin-bottom: 10px;">
+          <button type="button" class="action-btn stage-hide-collapsed" id="name-reveal-btn" style="width: 100%; max-width: 240px;" ${this.isReady ? '' : 'disabled'}>
+            ${this.isReady ? 'Reveal in π' : `Loading π… ${this.loadingPercent}%`}
+          </button>
+        </div>
+
         <!-- 8-Key Phone Keypad diagram (2-9 with ABC-WXYZ) -->
         <div class="stage-hide-collapsed" style="margin-bottom: 8px;">
           <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); margin-bottom: 4px;">
@@ -105,11 +112,6 @@ export class NamePanel {
           </div>
           <div id="name-keypad-grid" class="name-keypad-grid"></div>
         </div>
-
-        <!-- Primary button "Reveal in π" (Task 4c) -->
-        <button type="button" class="action-btn stage-hide-collapsed" id="name-reveal-btn" style="margin-top: 6px;" ${this.isReady ? '' : 'disabled'}>
-          ${this.isReady ? 'Reveal in π' : `Loading π… ${this.loadingPercent}%`}
-        </button>
 
         <!-- Result block (Task 4d) -->
         <div id="name-results" class="result-note" style="display: none; margin-top: 12px;"></div>

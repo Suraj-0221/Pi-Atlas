@@ -762,6 +762,13 @@ canvas#digit-canvas {
     justify-content: center;
   }
 
+  #name-reveal-btn,
+  #dob-search-btn {
+    min-height: 44px;
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+
   .link-btn {
     min-height: 40px;
     display: inline-flex;
